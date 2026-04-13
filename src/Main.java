@@ -3,7 +3,7 @@ import java.util.*;
 public class Main {
 
     public static void main(String[] args) {
-        System.out.println("--- Результаты выполнения Варианта 3 ---");
+        System.out.println();
 
         // 1. Array List: Kadane's Algorithm [cite: 24]
         int[] array1 = {-2, 1, -3, 4, -1, 2, 1, -5, 4};
@@ -51,39 +51,39 @@ public class Main {
     // --- TASK 2: Merge Two Sorted Lists --- [cite: 25]
     public static ListNode mergeTwoLists(ListNode l1, ListNode l2) {
         ListNode dummy = new ListNode(0);
-        ListNode tail = dummy;
+        ListNode tail = dummy;   //I used a dummy node to simplify the head of the new list.
         while (l1 != null && l2 != null) {
             if (l1.val <= l2.val) {
                 tail.next = l1; l1 = l1.next;
             } else {
                 tail.next = l2; l2 = l2.next;
             }
-            tail = tail.next;
+            tail = tail.next;   //By comparing the heads of both lists, I attached the smaller value to our result and moved the pointers forward.
         }
         tail.next = (l1 != null) ? l1 : l2;
         return dummy.next;
     }
 
-    // --- TASK 3: Min-Stack --- [cite: 26]
+    // --- TASK 3: Min-Stack --- [cite: 26]  //This is a standard stack that can retrieve the minimum element in constant time.
     static class MinStack {
         private Stack<Integer> s = new Stack<>(), minS = new Stack<>();
         public void push(int val) {
-            s.push(val);
+            s.push(val);                                         //To achieve $O(1)$ speed, I maintained two stacks. 
             if (minS.isEmpty() || val <= minS.peek()) minS.push(val);
         }
         public void pop() {
-            if (s.peek().equals(minS.peek())) minS.pop();
+            if (s.peek().equals(minS.peek())) minS.pop();  
             s.pop();
-        }
+        }  //
         public int top() { return s.peek(); }
         public int getMin() { return minS.peek(); }
-    }
+    }  //The primary stack stores all elements, while the auxiliary minStack keeps track of the minimum value at every level of the main stack.
 
-    // --- TASK 4: Sliding Window Maximum --- [cite: 27]
+    // --- TASK 4: Sliding Window Maximum --- [cite: 27]  It finds the maximum value in every "window" of size $K$ as it moves across an array.
     public static int[] maxSlidingWindow(int[] nums, int k) {
-        int n = nums.length;
+        int n = nums.length; //I implemented a Monotonic Queue using a Deque.
         int[] res = new int[n - k + 1];
-        Deque<Integer> dq = new ArrayDeque<>();
+        Deque<Integer> dq = new ArrayDeque<>(); 
         for (int i = 0; i < n; i++) {
             if (!dq.isEmpty() && dq.peekFirst() < i - k + 1) dq.pollFirst();
             while (!dq.isEmpty() && nums[dq.peekLast()] < nums[i]) dq.pollLast();
@@ -91,11 +91,11 @@ public class Main {
             if (i >= k - 1) res[i - k + 1] = nums[dq.peekFirst()];
         }
         return res;
-    }
+    }  //This allows me to store indices of elements in a way that the largest element's index is always at the front.
 
-    // --- TASK 5: Group Anagrams --- [cite: 28]
+    // --- TASK 5: Group Anagrams --- [cite: 28]  It groups words that are composed of the exact same characters.
     public static List<List<String>> groupAnagrams(String[] strs) {
-        Map<String, List<String>> map = new HashMap<>();
+        Map<String, List<String>> map = new HashMap<>();  //I used a HashMap where the "key" is the sorted version of the word.
         for (String s : strs) {
             char[] ca = s.toCharArray();
             Arrays.sort(ca);
@@ -104,11 +104,11 @@ public class Main {
         }
         return new ArrayList<>(map.values());
     }
-
-    // --- TASK 6: K-th Smallest Element in BST --- [cite: 29]
+//Since all anagrams result in the same string when their characters are sorted alphabetically, they are automatically grouped together in the map.
+    // --- TASK 6: K-th Smallest Element in BST --- [cite: 29]  It finds the $K$-th smallest value in a Binary Search Tree.
     private static int count = 0, result = -1;
     public static int kthSmallest(TreeNode root, int k) {
-        count = 0; // Сброс для корректного теста
+        count = 0; //I utilized the fundamental property of BSTs: an In-order traversal visits nodes in strictly increasing order.
         traverse(root, k);
         return result;
     }
@@ -117,14 +117,14 @@ public class Main {
         traverse(node.left, k);
         if (++count == k) { result = node.val; return; }
         traverse(node.right, k);
-    }
+    }  //I simply perform this traversal and stop at the $K$-th element. 
 
-    // --- TASK 7: Min-Heap from Scratch --- [cite: 30, 31]
+    // --- TASK 7: Min-Heap from Scratch --- [cite: 30, 31]  A "from-scratch" implementation of a binary min-heap.
     static class MinHeap {
         private List<Integer> heap = new ArrayList<>();
         public void insert(int val) {
             heap.add(val);
-            int cur = heap.size() - 1;
+            int cur = heap.size() - 1;  //The heap is represented as an ArrayList.
             while (cur > 0 && heap.get(cur) < heap.get((cur - 1) / 2)) {
                 Collections.swap(heap, cur, (cur - 1) / 2);
                 cur = (cur - 1) / 2;
@@ -142,7 +142,7 @@ public class Main {
             if (r < heap.size() && heap.get(r) < heap.get(smallest)) smallest = r;
             if (smallest != i) { Collections.swap(heap, i, smallest); heapify(smallest); }
         }
-    }
+    } //I implemented siftUp for insertions to maintain the heap property and a heapify  method for the extractMin operation.
 
     // Вспомогательные классы и методы
     static class ListNode {
